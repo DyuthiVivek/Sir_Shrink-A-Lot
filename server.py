@@ -4,11 +4,12 @@ from player import Player
 import pickle
 import pygame
 
+
 server = "172.16.145.21"
 port = 5555
 
-initial_ht = 100
-initial_wt = 100
+initial_ht = 64
+initial_wt = 56
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -59,4 +60,5 @@ while True:
 
     start_new_thread(threaded_client, (conn, currentPlayer))
     currentPlayer += 1
+    #print("player found")
 

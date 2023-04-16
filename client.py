@@ -2,9 +2,9 @@ import pygame
 import os
 from network import Network
 from player import Player
+from pygame import mixer
 import sys
 pygame.font.init()
-pygame.mixer.init()
 ALPHA=(255,255,255)
 #path = r"F:\Hacknite"
 path = ""
@@ -18,7 +18,7 @@ WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Medieval Game")
 
 def def_images():
-    global BG, IMG, IMG2, IMG3, IMG4, IMG5, IMG6, IMG7, IMG8, IMG9, IMG10, IMG11, IMG12, IMG13
+    global BG, IMG, IMG2, IMG3, IMG4, IMG5, IMG6, IMG7, IMG8, IMG9, IMG10, IMG11, IMG12, IMG13, IMG14
     BG = pygame.image.load(os.path.join(path,"Background_images","Background_01.png"))
     
     IMG = "Ground_02.png"
@@ -34,6 +34,7 @@ def def_images():
     IMG11 = "Ground-Additional_01.png"
     IMG12 = "Coin_02.png"
     IMG13 = "Life.png"
+    IMG14 = "Diamond.png"
       
 def create_ground(obs_ground):
     for i in range(5):
@@ -87,7 +88,10 @@ def create_coins(coins_set):
     coins_set.append(pygame.Rect(OBS_W*13.25,HEIGHT-(OBS_H)*(1.5),25,25))
     coins_set.append(pygame.Rect(OBS_W*10.25,HEIGHT-(OBS_H)*(3.55),25,25))
     coins_set.append(pygame.Rect(OBS_W*5,HEIGHT-(OBS_H)*(6),25,25))
-    
+
+def collect_diamond(diamond_set):
+    diamond_set.append(pygame.Rect(OBS_W*11.75,HEIGHT-(OBS_H)*(9.25),25,25))
+
 def draw_hearts(hearts_set):
     hearts_set.append(pygame.Rect(0,0,30,30))
     hearts_set.append(pygame.Rect(32,0,30,30))
@@ -133,6 +137,16 @@ class Level:
             i = i + 1
         return hearts_list
     
+    def diamonds(diamond_set):
+        diamond_list = pygame.sprite.Group()
+        i = 0
+        while i < len(diamond_set):
+            ground = Platform((diamond_set[i]).x, (diamond_set[i]).y, 25, 25, IMG14,'Collectable_Object_images')
+            diamond_list.add(ground)
+            i = i + 1
+        return diamond_list
+    
+    
     
     def platform(obs_plat):
         plat_list = pygame.sprite.Group()
@@ -146,6 +160,11 @@ class Level:
 
 
 def main(): 
+    mixer.init()
+    mixer.music.load(os.path.join(path,"music.mp3"))
+    mixer.music.set_volume(0.4)
+    mixer.music.play()
+    
     clock = pygame.time.Clock()
     run = True
     def_images()
@@ -161,11 +180,14 @@ def main():
     heart_set = []
     draw_hearts(heart_set)
 
+    diamond_set = []
+    collect_diamond(diamond_set)
+
     ground_list = Level.ground(obs_ground)
     plat_list = Level.platform(obs_plat)
     coins_list = Level.coins(coins_set)
     heart_list = Level.hearts(heart_set)
-    
+    diamond_list = Level.diamonds(diamond_set)
     
     n = Network()
     player2 = Player()
@@ -195,10 +217,11 @@ def main():
     
     while run:
         clock.tick(FPS)
-        lis = n.send([player.rect.x,player.rect.y,player.width,player.height,player.parity])
+        lis = n.send([player.rect.x,player.rect.y,player.width,player.height,player.parity,lis[5]])
         #print(lis)
         if lis[0]==None:
             run = False
+            pygame.time.delay(5000)
             pygame.quit()
             sys.exit()
 
@@ -248,19 +271,22 @@ def main():
         WIN.blit(img11,(OBS_W*(12.5), HEIGHT-(OBS_H)*(9.75)-30))
 
         rec = pygame.Rect((OBS_W*(12.5), HEIGHT-(OBS_H)*(9.75)-30),(OBS_W, OBS_H + 30) )
-        if not(player.update(ground_list,plat_list,coins_list,heart_list,rec)):
-            n.send([None,None,None,None,None])
+        l = player.update(ground_list,plat_list,coins_list,heart_list,diamond_list,rec)
+        if not(l[0]):
+            pygame.time.delay(5000)
+            n.send([None,lis[5],l[1],None,None,None])
             run = False
             pygame.quit()
             sys.exit()
         
         player.gravity()
-        #player.shrink()
+        player.shrink()
         player_list.draw(WIN)
         ground_list.draw(WIN)
         plat_list.draw(WIN)
         coins_list.draw(WIN)
         heart_list.draw(WIN)
+        diamond_list.draw(WIN)
 
         pygame.display.flip()
         clock.tick(FPS)

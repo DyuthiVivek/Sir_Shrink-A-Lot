@@ -2,6 +2,7 @@ import socket
 import pickle
 import sys
 
+
 class Network:
     def __init__(self):
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -25,7 +26,7 @@ class Network:
 
     def send(self, data):
         try:
-            if data == [None,None,None,None,None]:
+            if data[0] == None:
                 self.client.send(pickle.dumps(data))
                 sys.exit()
             self.client.send(pickle.dumps(data))
