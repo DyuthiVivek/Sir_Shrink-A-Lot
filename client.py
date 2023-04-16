@@ -158,7 +158,6 @@ class Level:
         
         return plat_list
 
-
 def main(): 
     mixer.init()
     mixer.music.load(os.path.join(path,"music.mp3"))
@@ -220,10 +219,10 @@ def main():
         lis = n.send([player.rect.x,player.rect.y,player.width,player.height,player.parity,lis[5]])
         #print(lis)
         if lis[0]==None:
+            
+            pygame.time.delay(1000)
             run = False
-            pygame.time.delay(5000)
-            pygame.quit()
-            sys.exit()
+            #sys.exit()
 
         player2.rect.x = lis[0]
         player2.rect.y = lis[1]
@@ -273,12 +272,10 @@ def main():
         rec = pygame.Rect((OBS_W*(12.5), HEIGHT-(OBS_H)*(9.75)-30),(OBS_W, OBS_H + 30) )
         l = player.update(ground_list,plat_list,coins_list,heart_list,diamond_list,rec)
         if not(l[0]):
-            pygame.time.delay(5000)
+            pygame.time.delay(1000)
             n.send([None,lis[5],l[1],None,None,None])
             run = False
-            pygame.quit()
-            sys.exit()
-        
+            
         player.gravity()
         player.shrink()
         player_list.draw(WIN)
