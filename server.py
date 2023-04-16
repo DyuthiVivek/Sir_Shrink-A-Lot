@@ -24,7 +24,6 @@ print("Waiting for a connection, Server Started")
 
 
 players = [[0,0,initial_wt, initial_ht,1,0], [1027-50,0,initial_wt, initial_ht,1,1]] #player object stored on the server
-
 def threaded_client(conn, player):
     conn.send(pickle.dumps(players[player]))
     reply = ""
@@ -52,6 +51,7 @@ def threaded_client(conn, player):
 
     print("Lost connection")
     conn.close()
+
 
 currentPlayer = 0
 while True:

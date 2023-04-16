@@ -15,7 +15,7 @@ OBS_W, OBS_H = 60,60
 ani = 1
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
         
-pygame.display.set_caption("Medieval Game")
+pygame.display.set_caption("Sir-Shrink-a-Lot")
 
 def def_images():
     global BG, IMG, IMG2, IMG3, IMG4, IMG5, IMG6, IMG7, IMG8, IMG9, IMG10, IMG11, IMG12, IMG13, IMG14
@@ -157,13 +157,35 @@ class Level:
             i=i+1
         
         return plat_list
+    
+def end_screen(text):
+    run = True
+    clock = pygame.time.Clock()
+    pygame.time.delay(1000)
+                
+    while run:
+        clock.tick(60)
+        WIN.fill((0,0,0))
+        font = pygame.font.SysFont("comicsans", 60)
+        t = font.render(text, 1, (255,0,0))
+        WIN.blit(t, (WIDTH//2 - t.get_width()//2,HEIGHT//2 - t.get_height()//2))
+        pygame.display.update()
+        pygame.display.flip()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                run = False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                run = False
+
+
 
 def main(): 
     mixer.init()
     mixer.music.load(os.path.join(path,"music.mp3"))
     mixer.music.set_volume(0.4)
     mixer.music.play()
-    
     clock = pygame.time.Clock()
     run = True
     def_images()
@@ -191,6 +213,9 @@ def main():
     n = Network()
     player2 = Player()
     lis = n.getP()
+    while(lis[0]==None):
+        print("waiting for players")
+        lis = n.getP()
     player2.rect.x = lis[0]
     player2.rect.y = lis[1]
     player2.width = lis[2]
@@ -217,76 +242,91 @@ def main():
     while run:
         clock.tick(FPS)
         lis = n.send([player.rect.x,player.rect.y,player.width,player.height,player.parity,lis[5]])
-        #print(lis)
+        print(lis)
         if lis[0]==None:
+            if(lis[1]==0):
+                text = "You Won!"
+            else:
+                text = "You Lost :("
             
-            pygame.time.delay(1000)
-            run = False
+            print("other",text)
+                
+            #run = False
+            end_screen(text)
             #sys.exit()
-
-        player2.rect.x = lis[0]
-        player2.rect.y = lis[1]
-        player2.width = lis[2]
-        player2.height = lis[3]
-        player2.parity = lis[4]
-        
-        if(player2.parity == -1):
-            img = pygame.image.load(os.path.join(path, 'Knight', 'run1-removebg-preview.png')).convert_alpha()
-            img = pygame.transform.scale(img, (player.width, player.height))
-            player2.image=pygame.transform.flip(img, True, False)
-            #player2.parity = prev_parity
         else:
-            img = pygame.image.load(os.path.join(path, 'Knight', 'run1-removebg-preview.png')).convert_alpha()
-            player2.image = pygame.transform.scale(img, (player.width, player.height))
+            player2.rect.x = lis[0]
+            player2.rect.y = lis[1]
+            player2.width = lis[2]
+            player2.height = lis[3]
+            player2.parity = lis[4]
             
+            if(player2.parity == -1):
+                img = pygame.image.load(os.path.join(path, 'Knight', 'run1-removebg-preview.png')).convert_alpha()
+                img = pygame.transform.scale(img, (player.width, player.height))
+                player2.image=pygame.transform.flip(img, True, False)
+                #player2.parity = prev_parity
+            else:
+                img = pygame.image.load(os.path.join(path, 'Knight', 'run1-removebg-preview.png')).convert_alpha()
+                player2.image = pygame.transform.scale(img, (player.width, player.height))
+                
 
-        #print(lis,"player 2")
-        
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                run = False
-                pygame.quit()
-
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_LEFT or event.key == ord('a'):
-                    player.control(-steps, 0)
-                    
-                if event.key == pygame.K_RIGHT or event.key == ord('d'):
-                    player.control(steps, 0)
-                    
-                if event.key == pygame.K_UP or event.key == ord('w'):
-                    player.jump()
-                    
-
-            if event.type == pygame.KEYUP:
-                if event.key == pygame.K_LEFT or event.key == ord('a'):
-                    player.control(steps, 0)
-                if event.key == pygame.K_RIGHT or event.key == ord('d'):
-                    player.control(-steps, 0)
-
-        WIN.blit(BG,(0,0))
-        img11 = pygame.image.load(os.path.join(path,"Platformer_images",IMG11))
-        img11 = pygame.transform.scale(img11,(OBS_W, OBS_H + 30))
-        WIN.blit(img11,(OBS_W*(12.5), HEIGHT-(OBS_H)*(9.75)-30))
-
-        rec = pygame.Rect((OBS_W*(12.5), HEIGHT-(OBS_H)*(9.75)-30),(OBS_W, OBS_H + 30) )
-        l = player.update(ground_list,plat_list,coins_list,heart_list,diamond_list,rec)
-        if not(l[0]):
-            pygame.time.delay(1000)
-            n.send([None,lis[5],l[1],None,None,None])
-            run = False
+            #print(lis,"player 2")
             
-        player.gravity()
-        player.shrink()
-        player_list.draw(WIN)
-        ground_list.draw(WIN)
-        plat_list.draw(WIN)
-        coins_list.draw(WIN)
-        heart_list.draw(WIN)
-        diamond_list.draw(WIN)
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    run = False
+                    pygame.quit()
 
-        pygame.display.flip()
-        clock.tick(FPS)
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_LEFT or event.key == ord('a'):
+                        player.control(-steps, 0)
+                        
+                    if event.key == pygame.K_RIGHT or event.key == ord('d'):
+                        player.control(steps, 0)
+                        
+                    if event.key == pygame.K_UP or event.key == ord('w'):
+                        player.jump()
+                        
+
+                if event.type == pygame.KEYUP:
+                    if event.key == pygame.K_LEFT or event.key == ord('a'):
+                        player.control(steps, 0)
+                    if event.key == pygame.K_RIGHT or event.key == ord('d'):
+                        player.control(-steps, 0)
+
+            WIN.blit(BG,(0,0))
+            img11 = pygame.image.load(os.path.join(path,"Platformer_images",IMG11))
+            img11 = pygame.transform.scale(img11,(OBS_W, OBS_H + 30))
+            WIN.blit(img11,(OBS_W*(12.5), HEIGHT-(OBS_H)*(9.75)-30))
+
+            rec = pygame.Rect((OBS_W*(12.5), HEIGHT-(OBS_H)*(9.75)-30),(OBS_W, OBS_H + 30) )
+            l = player.update(ground_list,plat_list,coins_list,heart_list,diamond_list,rec)
+            if not(l[0]):
+                if(l[1]==1):
+                    text = "You Won!"
+                else:
+                    text = "You Lost :("
+                    
+                print("self",text)
+                t = n.send([None,l[1],None,None,None,None])
+                #run = False
+                #sys.exit()
+                
+                print("before end screen")
+                end_screen(text)
+                
+            player.gravity()
+            player.shrink()
+            player_list.draw(WIN)
+            ground_list.draw(WIN)
+            plat_list.draw(WIN)
+            coins_list.draw(WIN)
+            heart_list.draw(WIN)
+            diamond_list.draw(WIN)
+
+            pygame.display.flip()
+            clock.tick(FPS)
 
         
     main()

@@ -28,7 +28,7 @@ class Network:
         try:
             if data[0] == None:
                 self.client.send(pickle.dumps(data))
-                sys.exit()
+                #sys.exit()
             self.client.send(pickle.dumps(data))
             return pickle.loads(self.client.recv(2048*4))
         except socket.error as e:
