@@ -1,17 +1,17 @@
-## Zense HackNite '23 
-## Game Dev With Pygame
-## Theme : Size is relative
-## Sir Shrink-a-Lot
+<h2> Zense HackNite '23 </h2>
+<h2> Game Dev With Pygame </h2> 
+<h2> Theme : Size is relative </h2> 
+<h2> Sir Shrink-a-Lot </h2> 
 
-## Team details:
+## Team Membeers
 
-Dyuthi Vivek 
-Swetha Murali 
+1. Dyuthi Vivek 
+2. Swetha Murali 
 
 
 One dark, stormy night, Sir Shrink-a-Lot was riding back to the castle after a long battle through the forest and stumbled upon a lonely cottage, where he found a witch stirring a potion in a large cauldron. She offered him a steaming green potion. Once he drank it, he found himself shrinking rapidly. Enraged, he asked her what she had done to him and how to undo it. She simply said, “Follow the coins to your final goal, after which you will be whole again.” and handed him a scroll. On it was written 
-
-Size is relative. It’s your courage that’s constant.
+<br>
+<h3> Size is relative. It’s your courage that’s constant. </h3>
 
 ## How to play:
 This is a multiplayer game. The objective is to reach the restoring diamond before the other player. You will be constantly shrinking. If you let your player disappear from the screen, you will lose a life. The game is lost once all 3 lives are lost. Collect coins to increase your player’s size.
