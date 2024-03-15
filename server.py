@@ -5,7 +5,8 @@ import pickle
 import pygame
 
 
-server = "172.16.145.21"
+#server = "172.16.145.21"
+server = "127.0.0.1"
 port = 5555
 
 initial_ht = 64

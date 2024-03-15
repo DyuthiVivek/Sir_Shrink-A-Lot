@@ -48,11 +48,13 @@ class Player(pygame.sprite.Sprite):
     
     def shrink(self):
         shrink_ratio=0.99
+        height = self.height
         self.width*=shrink_ratio
         self.height*=shrink_ratio
         self.image = pygame.transform.scale(self.image,(self.width,self.height))
         self.rect.width=self.width
         self.rect.height=self.height
+        self.movey += height*0.01
         
     def coin_collide(self):
         self.image = pygame.transform.scale(self.image, (self.width*3, self.height*3))
@@ -115,7 +117,7 @@ class Player(pygame.sprite.Sprite):
 
         if self.is_jumping and self.is_falling is False:
             self.is_falling = True
-            self.movey -= 20  # how high to jump
+            self.movey -= 25  # how high to jump
          
         self.rect.x += self.movex
         self.rect.y += self.movey
